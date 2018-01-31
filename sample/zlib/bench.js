@@ -1,21 +1,21 @@
-var zlibjs = require('browserify-zlib');
+let zlibjs = require('browserify-zlib');
 
-var num = 20000;
-var start = null;
+let num = 20000;
+let start = null;
 
-var message = {
+let message = {
 	key: 'hello'
 }
 
 start = Date.now();
 
 function run() {
-	for (var i = 0; i < num; i++) {
+	for (let i = 0; i < num; i++) {
 		zlibjs.gunzipSync(zlibjs.gzipSync(JSON.stringify(message)));
 	}
 
-	var now = Date.now();
-	var cost = now - start;
+	let now = Date.now();
+	let cost = now - start;
 	console.log('run %d num requests cost: %d ops/sec', num, cost, (num / (cost / 1000)).toFixed(2));
 	run();
 }

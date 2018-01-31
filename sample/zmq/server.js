@@ -1,5 +1,5 @@
-var zmq = require('zmq');
-var socket = zmq.socket('router');
+let zmq = require('zmq');
+let socket = zmq.socket('router');
 
 socket.bind('tcp://*:3331', function(err) {
 	socket.on('message', function(clientId, pkg) {

@@ -1,13 +1,13 @@
-var net = require('net'),
+let net = require('net'),
 	mqttCon = require('mqtt-connection'),
 	server = new net.Server();
-var num = 300;
-var len = num * num;
-var i = 1;
+let num = 300;
+let len = num * num;
+let i = 1;
 
-var start = 0;
+let start = 0;
 server.on('connection', function(stream) {
-	var conn = mqttCon(stream);
+	let conn = mqttCon(stream);
 
 	conn.on('connect', function() {
 		console.log('connected');

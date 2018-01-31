@@ -1,11 +1,11 @@
-var lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
-var Gateway = require('../../' + lib + '/rpc-server/gateway');
-var should = require('should');
-var Client = require('./client/mock-client');
+let lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
+let Gateway = require('../../' + lib + '/rpc-server/gateway');
+let should = require('should');
+let Client = require('./client/mock-client');
 
-var WAIT_TIME = 100;
+let WAIT_TIME = 100;
 
-var services = {
+let services = {
   user: {
     addOneService: {
       doService: function(num, cb) {
@@ -20,15 +20,15 @@ var services = {
   }
 };
 
-var port = 3333;
-var opts = {services: services, port: port};
+let port = 3333;
+let opts = {services: services, port: port};
 
 describe('gateway', function() {
   describe('#start', function() {
     it('should be ok when listen a valid port and emit a closed event when it closed', function(done) {
-      var errorCount = 0;
-      var closeCount = 0;
-      var gateway = Gateway.create(opts);
+      let errorCount = 0;
+      let closeCount = 0;
+      let gateway = Gateway.create(opts);
 
       should.exist(gateway);
       gateway.on('error', function(err) {
@@ -49,9 +49,9 @@ describe('gateway', function() {
     });
 
     it('should emit an error when listen a port in use', function(done) {
-      var errorCount = 0;
-      var opts = {services: services, port: 80};
-      var gateway = Gateway.create(opts);
+      let errorCount = 0;
+      let opts = {services: services, port: 80};
+      let gateway = Gateway.create(opts);
 
       should.exist(gateway);
       gateway.on('error', function(err) {
@@ -70,21 +70,21 @@ describe('gateway', function() {
 
   describe('#new message callback', function() {
     it('should route msg to the appropriate service object and return response to remote client by callback', function(done) {
-      var clientCallbackCount = 0;
-      var value = 1;
-      var msg = {
+      let clientCallbackCount = 0;
+      let value = 1;
+      let msg = {
         namespace: 'user',
         service: 'addOneService',
         method: 'doService',
         args: [value]
       };
 
-      var gateway = Gateway.create(opts);
+      let gateway = Gateway.create(opts);
 
       should.exist(gateway);
       gateway.start();
 
-      var client = Client.create();
+      let client = Client.create();
       client.connect('127.0.0.1', port, function() {
         client.send(msg, function(err, result) {
           result.should.eql(value + 1);
@@ -101,21 +101,21 @@ describe('gateway', function() {
     });
 
     it('should return an error if the service not exist', function(done) {
-      var clientCallbackCount = 0;
-      var value = 1;
-      var msg = {
+      let clientCallbackCount = 0;
+      let value = 1;
+      let msg = {
         namespace: 'user',
         service: 'addNService',
         method: 'doService',
         args: [value]
       };
 
-      var gateway = Gateway.create(opts);
+      let gateway = Gateway.create(opts);
 
       should.exist(gateway);
       gateway.start();
 
-      var client = Client.create();
+      let client = Client.create();
       client.connect('127.0.0.1', port, function() {
         client.send(msg, function(err, result) {
           should.exist(err)
@@ -133,27 +133,27 @@ describe('gateway', function() {
     });
 
     it('should keep the relationship with request and response in batch rpc calls', function(done) {
-      var clientCallbackCount = 0;
-      var value = 1;
-      var msg1 = {
+      let clientCallbackCount = 0;
+      let value = 1;
+      let msg1 = {
         namespace: 'user',
         service: 'addOneService',
         method: 'doService',
         args: [value]
       };
-      var msg2 = {
+      let msg2 = {
         namespace: 'user',
         service: 'addTwoService',
         method: 'doService',
         args: [value]
       };
 
-      var gateway = Gateway.create(opts);
+      let gateway = Gateway.create(opts);
 
       should.exist(gateway);
       gateway.start();
 
-      var client = Client.create();
+      let client = Client.create();
       client.connect('127.0.0.1', port, function() {
         client.send(msg1, function(err, result) {
           result.should.eql(value + 1);

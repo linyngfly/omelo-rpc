@@ -17,14 +17,14 @@
  * under the License.
  */
 
-var thrift = require("thrift");
-var Calculator = require("./gen-nodejs/Calculator");
-var ttypes = require("./gen-nodejs/tutorial_types");
-var SharedStruct = require("./gen-nodejs/shared_types").SharedStruct;
+let thrift = require("thrift");
+let Calculator = require("./gen-nodejs/Calculator");
+let ttypes = require("./gen-nodejs/tutorial_types");
+let SharedStruct = require("./gen-nodejs/shared_types").SharedStruct;
 
-var data = {};
+let data = {};
 
-var server = thrift.createServer(Calculator, {
+let server = thrift.createServer(Calculator, {
   ping: function(result) {
     // console.log("ping()");
     result();
@@ -38,7 +38,7 @@ var server = thrift.createServer(Calculator, {
   calculate: function(logid, work, result) {
     console.log("calculate(", logid, ",", work, ")");
 
-    var val = 0;
+    let val = 0;
     if (work.op == ttypes.Operation.ADD) {
       val = work.num1 + work.num2;
     } else if (work.op === ttypes.Operation.SUBTRACT) {
@@ -47,7 +47,7 @@ var server = thrift.createServer(Calculator, {
       val = work.num1 * work.num2;
     } else if (work.op === ttypes.Operation.DIVIDE) {
       if (work.num2 === 0) {
-        var x = new ttypes.InvalidOperation();
+        let x = new ttypes.InvalidOperation();
         x.whatOp = work.op;
         x.why = 'Cannot divide by 0';
         result(x);
@@ -55,14 +55,14 @@ var server = thrift.createServer(Calculator, {
       }
       val = work.num1 / work.num2;
     } else {
-      var x = new ttypes.InvalidOperation();
+      let x = new ttypes.InvalidOperation();
       x.whatOp = work.op;
       x.why = 'Invalid operation';
       result(x);
       return;
     }
 
-    var entry = new SharedStruct();
+    let entry = new SharedStruct();
     entry.key = logid;
     entry.value = ""+val;
     data[logid] = entry;

@@ -1,11 +1,11 @@
-var lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
-var should = require('should');
-var route = require('../../' + lib + '/rpc-client/router').route;
+let lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
+let should = require('should');
+let route = require('../../' + lib + '/rpc-client/router').route;
 
-var WAIT_TIME = 20;
+let WAIT_TIME = 20;
 
 describe('router', function() {
-  var servers = {
+  let servers = {
     'logic': [
       {id: 'logic-server-1', host: 'localhost',  port: 3333},
       {id: 'logic-server-2', host: 'localhost',  port: 4444}
@@ -15,20 +15,20 @@ describe('router', function() {
     ]
   };
 
-  var msg = {
+  let msg = {
     'serverType': 'logic',
     'service': 'rpcRemote',
     'method': 'someMethod',
     'args': []
   };
 
-  var session = {
+  let session = {
     'uid': 'changchang005@gmail.com'
   };
 
   describe("#route", function() {
     it('should return the same result for the same user if the mapping info not changed', function(done) {
-      var firstRoute, secondRoute;
+      let firstRoute, secondRoute;
 
       route(session, msg, servers, function(err, sid) {
         should.exist(sid);
@@ -47,7 +47,7 @@ describe('router', function() {
     });
 
     it('should return an error if try to route to an invalid server type', function(done) {
-      var invalidMsg = {
+      let invalidMsg = {
         'serverType': 'invalid-type',
         'service': 'rpcRemote',
         'method': 'someMethod',
@@ -61,13 +61,13 @@ describe('router', function() {
     });
 
     it('should be ok when session or session.uid is null', function(done) {
-      var okCount = 0;
+      let okCount = 0;
       route(null, msg, servers, function(err, sid) {
         should.exist(sid);
         okCount++;
       });
 
-      var session = {
+      let session = {
         'uid': null
       };
 

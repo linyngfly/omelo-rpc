@@ -1,5 +1,5 @@
-var WebSocket = require('ws');
-var ws = new WebSocket('ws://localhost:3331');
+let WebSocket = require('ws');
+let ws = new WebSocket('ws://localhost:3331');
 
 ws.on('open', function open() {
 	start = Date.now();
@@ -12,9 +12,9 @@ ws.on('message', function(data, flags) {
 	run();
 });
 
-var num_requests = 20000;
-var start = null;
-var times = 0;
+let num_requests = 20000;
+let start = null;
+let times = 0;
 
 function run() {
 	if (times > num_requests) {
@@ -22,8 +22,8 @@ function run() {
 	}
 
 	if (times == num_requests) {
-		var now = Date.now();
-		var cost = now - start;
+		let now = Date.now();
+		let cost = now - start;
 		console.log('run %d num requests cost: %d ops/sec', num_requests, cost, (num_requests / (cost / 1000)).toFixed(2));
 		times = 0;
 		start = now;
@@ -32,6 +32,6 @@ function run() {
 
 	times++;
 
-	var payload = "hello";
+	let payload = "hello";
 	ws.send(payload);
 }

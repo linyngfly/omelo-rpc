@@ -1,8 +1,8 @@
-var lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
-var should = require('should');
-var Proxy = require('../../' + lib + '/util/proxy');
+let lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
+let should = require('should');
+let Proxy = require('../../' + lib + '/util/proxy');
 
-var A = function(value) {
+let A = function(value) {
   this.value = value;
 };
 A.prototype.add = function(num) {
@@ -18,27 +18,27 @@ A.prototype.addInternal = function() {
   this.add(1);
 };
 
-var B = function(value){
+let B = function(value){
   this.value = value;
 };
 B.prototype.addA = function() {
   this.a.value++;
 };
 
-var callback = function(service, method, args, attach, invoke) {
+let callback = function(service, method, args, attach, invoke) {
 
 };
 
 describe('proxy', function() {
   describe('#create', function() {
     it('should invoke the proxy function if it had been set', function() {
-      var callbackCount = 0;
-      var cb = function(service, method, args, attach, invoke) {
+      let callbackCount = 0;
+      let cb = function(service, method, args, attach, invoke) {
         callbackCount++;
       };
-      var a = new A(1);
+      let a = new A(1);
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         service: 'A',
         origin: a,
         proxyCB: cb
@@ -48,10 +48,10 @@ describe('proxy', function() {
     });
 
     it('should invoke the origin function if the proxy function not set', function() {
-      var value = 1;
-      var a = new A(value);
+      let value = 1;
+      let a = new A(value);
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a
       });
       proxy.add(1);
@@ -59,22 +59,22 @@ describe('proxy', function() {
     });
 
     it('should invoke the origin function if the invoke callback had been called in proxy function', function() {
-      var callbackCount = 0;
-      var originCallCount = 0;
-      var value = 1;
+      let callbackCount = 0;
+      let originCallCount = 0;
+      let value = 1;
 
-      var cb = function(namespace, method, args, attach, invoke) {
+      let cb = function(namespace, method, args, attach, invoke) {
         callbackCount++;
         invoke(args);
       };
-      var a = new A(value);
+      let a = new A(value);
       a.add = function(num) {
         originCallCount++;
         this.value += num;
       };
 
       //overwrite the origin function
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a,
         proxyCB: cb
       });
@@ -86,21 +86,21 @@ describe('proxy', function() {
     });
 
     it('should not invoke the origin function if the invoke callback not called', function() {
-      var callbackCount = 0;
-      var originCallCount = 0;
-      var value = 1;
+      let callbackCount = 0;
+      let originCallCount = 0;
+      let value = 1;
 
-      var cb = function(namespace, method, args, attach, invoke) {
+      let cb = function(namespace, method, args, attach, invoke) {
         callbackCount++;
       };
-      var a = new A(value);
+      let a = new A(value);
       //overwrite the origin function
       a.add = function(num) {
         originCallCount++;
         this.value += this.value;
       };
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a,
         proxyCB: cb
       });
@@ -112,10 +112,10 @@ describe('proxy', function() {
     });
 
     it('should flush the operation result on fields to the origin object', function() {
-      var value = 1;
+      let value = 1;
 
-      var a = new A(value);
-      var proxy = Proxy.create({
+      let a = new A(value);
+      let proxy = Proxy.create({
         origin: a
       });
 
@@ -126,22 +126,22 @@ describe('proxy', function() {
     });
 
     it('should be ok if create proxies for two objects that references each other', function() {
-      var callbackCount = 0;
-      var valueA = 1;
-      var valueB = 2;
+      let callbackCount = 0;
+      let valueA = 1;
+      let valueB = 2;
 
-      var cb = function(namespace, method, args, attach, invoke) {
+      let cb = function(namespace, method, args, attach, invoke) {
         callbackCount++;
         invoke(args);
       };
-      var a = new A(valueA);
-      var b = new B(valueB);
+      let a = new A(valueA);
+      let b = new B(valueB);
 
-      var proxyA = Proxy.create({
+      let proxyA = Proxy.create({
         origin: a,
         proxyCB: cb
       });
-      var proxyB = Proxy.create({
+      let proxyB = Proxy.create({
         origin: b,
         proxyCB: cb
       });
@@ -156,16 +156,16 @@ describe('proxy', function() {
     });
 
     it('should not proxy the internal invoking', function() {
-      var callbackCount = 0;
-      var value = 1;
+      let callbackCount = 0;
+      let value = 1;
 
-      var cb = function(namespace, method, args, attach, invoke) {
+      let cb = function(namespace, method, args, attach, invoke) {
         callbackCount++;
         invoke(args);
       };
-      var a = new A(value);
+      let a = new A(value);
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a,
         proxyCB: cb
       });
@@ -176,9 +176,9 @@ describe('proxy', function() {
     });
 
     it('should has the same class info with origin object', function() {
-      var a = new A(1);
+      let a = new A(1);
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a
       });
 
@@ -186,17 +186,17 @@ describe('proxy', function() {
     });
 
     it('should pass the attach from opts to invoke callback', function() {
-      var callbackCount = 0;
-      var expectAttach = {someValue: 1, someObject: {}, someStr: "hello"};
+      let callbackCount = 0;
+      let expectAttach = {someValue: 1, someObject: {}, someStr: "hello"};
 
-      var cb = function(namespace, method, args, attach, invoke) {
+      let cb = function(namespace, method, args, attach, invoke) {
         callbackCount++;
         should.exist(attach);
         attach.should.equal(expectAttach);
       };
-      var a = new A(1);
+      let a = new A(1);
 
-      var proxy = Proxy.create({
+      let proxy = Proxy.create({
         origin: a,
         proxyCB: cb,
         attach: expectAttach

@@ -1,27 +1,27 @@
-var Server = require('../../').server;
-var should = require('should');
+let Server = require('../../').server;
+let should = require('should');
 
-var WAIT_TIME = 100;
+let WAIT_TIME = 100;
 
-var paths = [
+let paths = [
   {namespace: 'user', path: __dirname + '../../mock-remote/area'},
   {namespace: 'sys', path: __dirname + '../../mock-remote/connector'}
 ];
 
-var port = 3333;
+let port = 3333;
 
 describe('server', function() {
 
   describe('#create', function() {
     it('should create gateway by providing port and paths parameters', function(done) {
-      var opts = {
+      let opts = {
         paths: paths,
         port: port
       };
 
-      var errorCount = 0;
-      var closeCount = 0;
-      var gateway = Server.create(opts);
+      let errorCount = 0;
+      let closeCount = 0;
+      let gateway = Server.create(opts);
 
       should.exist(gateway);
       gateway.on('error', function(err) {
@@ -42,10 +42,10 @@ describe('server', function() {
     });
 
     it('should change the default acceptor by pass the acceptorFactory to the create function', function(done) {
-      var oport = 3333;
-      var constructCount = 0, listenCount = 0, closeCount = 0;
+      let oport = 3333;
+      let constructCount = 0, listenCount = 0, closeCount = 0;
 
-      var MockAcceptor = function(opts, cb) {
+      let MockAcceptor = function(opts, cb) {
         constructCount++;
       };
 
@@ -62,19 +62,19 @@ describe('server', function() {
 
       MockAcceptor.prototype.emit = function() {};
 
-      var acceptorFactory = {
+      let acceptorFactory = {
         create: function(opts, cb) {
           return new MockAcceptor(null, cb);
         }
       };
 
-      var opts = {
+      let opts = {
         paths: paths,
         port: oport,
         acceptorFactory: acceptorFactory
       };
 
-      var gateway = Server.create(opts);
+      let gateway = Server.create(opts);
 
       should.exist(gateway);
 

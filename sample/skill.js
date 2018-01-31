@@ -1,20 +1,20 @@
 /**
  * 技能动作类
  */
-var isNodeJS = 'undefined'!==typeof module;
+let isNodeJS = 'undefined'!==typeof module;
 //如果module没有定义，说明是客户端
 if (isNodeJS){
     _ = require('underscore');
 }
 
-var SkillAction = {};
+let SkillAction = {};
 SkillAction.AttrArr = ['','wuLi','tongShuai','zhiLi','zhengZhi'];
 SkillAction.wLayer = null;
 
 /// 计算技能伤害
 SkillAction.calDamage = function(equiper, equipObject, target, skill, addParas){
-    var p = [];
-    for(var i=0;i<17;i++){
+    let p = [];
+    for(let i=0;i<17;i++){
         p[i] = 1;
     }
     p[0] = JueWei.getTroopsLimit(equiper.jueWei, equiper.shiLi);
@@ -77,7 +77,7 @@ SkillAction.calDamage = function(equiper, equipObject, target, skill, addParas){
 
 /// 计算军师技能伤害
 SkillAction.calAdviserDamage = function(equiper, equipObject, target, skill, addParas){
-    var p = [];
+    let p = [];
     p[0] = equipObject;
     p[1] = target;
     p[2] = skill;
@@ -90,17 +90,17 @@ SkillAction.scopeLoop = function(cx, cy, cs, cb, cells){
     if(!cells){
         cells = SkillAction.wLayer.map.scopeCellsByTileXY(cx, cy, cs, true);
     }
-    var visitedObjs = [];
-    for(var i=0;i<cells.length;i++){
+    let visitedObjs = [];
+    for(let i=0;i<cells.length;i++){
         //_.log(i, cells[i].cx, cells[i].cy);
-        var objs = cells[i].objects;
+        let objs = cells[i].objects;
         if(objs){
-            for (var j = 0; j < objs.length; j++) {
-                var obj = objs[j];
+            for (let j = 0; j < objs.length; j++) {
+                let obj = objs[j];
                 //_.log(obj.name);
                 if(visitedObjs.indexOf(obj)===-1){
                     visitedObjs.push(obj);
-                    var breakFlag = cb(obj);
+                    let breakFlag = cb(obj);
                     if(breakFlag){
                         break;
                     }
@@ -111,16 +111,16 @@ SkillAction.scopeLoop = function(cx, cy, cs, cb, cells){
 };
 
 SkillAction.initTileNodes = function(cx, cy, cs) {
-    var map = SkillAction.wLayer.map;
-    var node = new cc.Node();
-    var cells = map.scopeCellsByTileXY(cx, cy, cs, true);
-    var centerMapPos = map.tile2map(cx, cy);
+    let map = SkillAction.wLayer.map;
+    let node = new cc.Node();
+    let cells = map.scopeCellsByTileXY(cx, cy, cs, true);
+    let centerMapPos = map.tile2map(cx, cy);
     node.x = centerMapPos[0];
     node.y = centerMapPos[1];
     SkillAction.wLayer._bgEffNode.addChild(node);
-    for (var i = 0; i < cells.length; i++) {
-        var cellPos = map.tile2map(cells[i].cx, cells[i].cy);
-        var tileNode = new TileNode(SkillAction.wLayer);
+    for (let i = 0; i < cells.length; i++) {
+        let cellPos = map.tile2map(cells[i].cx, cells[i].cy);
+        let tileNode = new TileNode(SkillAction.wLayer);
         tileNode.x = cellPos[0] - centerMapPos[0];
         tileNode.y = cellPos[1] - centerMapPos[1];
         tileNode.changeColor(TILE_DEF.COLOR_RED);
@@ -133,22 +133,22 @@ SkillAction.initTileNodes = function(cx, cy, cs) {
 
 /// 寻找包裹路径的格子
 SkillAction.findCellsAroundPath = function(path){
-    var cellsMap = {};
-    for(var i=0;i<path.length;i++){
-        var cell = path[i];
+    let cellsMap = {};
+    for(let i=0;i<path.length;i++){
+        let cell = path[i];
         if(!cellsMap[cell.cx+'_'+cell.cy]){
             cellsMap[cell.cx+'_'+cell.cy] = cell;
         }
-        var cells = SkillAction.wLayer.map.scopeCells(cell.cx, cell.cy, 1, false);
-        for(var j=0;j<cells.length;j++){
-            var ocell = cells[j];
+        let cells = SkillAction.wLayer.map.scopeCells(cell.cx, cell.cy, 1, false);
+        for(let j=0;j<cells.length;j++){
+            let ocell = cells[j];
             if(!cellsMap[ocell.cx+'_'+ocell.cy]){
                 cellsMap[ocell.cx+'_'+ocell.cy] = ocell;
             }
         }
     }
-    var cells = [];
-    for(var key in cellsMap){
+    let cells = [];
+    for(let key in cellsMap){
         cells.push(cellsMap[key]);
     }
     return cells;
@@ -160,7 +160,7 @@ SkillAction.checkTargetBeDebuff = function(target){
 
 /// 检验技能影响类型
 SkillAction.checkAffectType = function(target, self, action){
-    var ret;
+    let ret;
     switch (action.affectType) {
         case SKILL_DEF.AFFECT_ENEMY:
             ret = target.force!==self.force;
@@ -188,7 +188,7 @@ SkillAction.checkAffectType = function(target, self, action){
 
 /// 根据action的TargetType获取action的target
 SkillAction.getActionTarget = function(target, action){
-    var ret = null;
+    let ret = null;
     switch (action.targetType){
         case SKILL_DEF.TARGET_ARMY:
             if(target.type===MAP_DEF.TYPE_UNIT){
@@ -229,15 +229,15 @@ SkillAction.getActionTarget = function(target, action){
 
 /// 绑定一次技能
 SkillAction.bindSkillOnce = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
-    var skillID = addParas['skillID'];
-    var dj = target.getSatrap();    //获得目标的大将，并创建一个新技能给那个对象
-    var newSkill = SkillAction.wLayer.skillMgr.createSkill(skillID, dj, null, true, target);    //添加给新武将使用一次的军师技能
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
+    let skillID = addParas['skillID'];
+    let dj = target.getSatrap();    //获得目标的大将，并创建一个新技能给那个对象
+    let newSkill = SkillAction.wLayer.skillMgr.createSkill(skillID, dj, null, true, target);    //添加给新武将使用一次的军师技能
     _.log('bindSkillOnce', target.name);
     if(newSkill.needTouch()){
         SkillAction.wLayer._selectedSkill = newSkill;
@@ -251,28 +251,28 @@ SkillAction.bindSkillOnce = function(paras) {
 
 /// 添加buff
 SkillAction.addBuff = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
-    var buffID = addParas['buffID'];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
+    let buffID = addParas['buffID'];
     _.log('SkillAction addbuff', action.condition);
     if(buffID>=10000&&buffID<=99999){   //如果buffid只有5位，则补上玩家的等级作为buff等级
         buffID = buffID*100+USER.level;
     }
-    //var buffArg = addParas['args'][0];  //buff通常只取第一个参数
-    var duration = addParas['duration'] || skill.duration;  //如果action有duration则取action的 否则取skill的
+    //let buffArg = addParas['args'][0];  //buff通常只取第一个参数
+    let duration = addParas['duration'] || skill.duration;  //如果action有duration则取action的 否则取skill的
 
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action)) {
             //如果有buffid 且每个target满足action的条件
             if(buffID!==undefined && (!action.condition || action.condition && SkillCondition[action.condition](obj, equiper, equipObject, skill, action))){
-                var realTarget = SkillAction.getActionTarget(obj, action);
+                let realTarget = SkillAction.getActionTarget(obj, action);
                 if(realTarget){
                     if(realTarget instanceof Array){    //如果是数组类型，则说明取到的是武将
-                        for(var i=0;i<realTarget.length;i++){
+                        for(let i=0;i<realTarget.length;i++){
                             if(duration!==0){
                                 SkillAction.wLayer.buffMgr.addBuff(buffID, realTarget[i], duration * _.TIME.SEC);
                             } else {    //如果没有duration 则取buff默认的duration
@@ -294,13 +294,13 @@ SkillAction.addBuff = function(paras) {
 
 /// 单体技能伤害
 SkillAction.skillhurt = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     if(SkillAction.checkTargetBeDebuff(target)){
-        var damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
+        let damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
         _.log('skillhurt',damage);
         SkillAction.attackAction(damage, equipObject, target, ARMY_DEF.DAMAGE_TYPE_NORMAL);
         //target.changeTroops(-damage);
@@ -309,42 +309,42 @@ SkillAction.skillhurt = function(paras){
 
 /// 击退
 SkillAction.beatBack = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     if(SkillAction.checkTargetBeDebuff(target)){
-        var damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
+        let damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
         //_.log('beatBack',damage);
         SkillAction.attackAction(damage, equipObject, target, ARMY_DEF.DAMAGE_TYPE_NORMAL);
         //target.changeTroops(-damage);
-        var dx = target.x - equipObject.x;
-        var dy = (target.y - equipObject.y)*GRID_WH;
+        let dx = target.x - equipObject.x;
+        let dy = (target.y - equipObject.y)*GRID_WH;
         //_.log('beatBack',dx, dy);
-        var dir = WORLD.getFaceXyDir(dx, dy);
-        var neighbor = equipObject.pMap.getNeighbor(target.cx, target.cy, WORLD.getNeighborDirByFaceDir(dir));
+        let dir = WORLD.getFaceXyDir(dx, dy);
+        let neighbor = equipObject.pMap.getNeighbor(target.cx, target.cy, WORLD.getNeighborDirByFaceDir(dir));
         target.transferToTile(neighbor.cx, neighbor.cy);
     }
 };
 
 /// 恢复友军武将受伤状态
 SkillAction.cureInjury = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
 
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action)) {
-            var wjs = [];
+            let wjs = [];
             if(obj.type===MAP_DEF.TYPE_UNIT){
                 wjs = obj.wuJiang.getWuJiangs();
             }
-            for(var i=0;i<wjs.length;i++){
-                var wj = wjs[i];
+            for(let i=0;i<wjs.length;i++){
+                let wj = wjs[i];
                 if(!wj.checkHealthy()){
                     wj.setJianKang(WJ_DEF.JIAN_KANG);
                 }
@@ -355,20 +355,20 @@ SkillAction.cureInjury = function(paras) {
 
 /// 驱散友军debuff
 SkillAction.refresh = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
-    var buffMgr = equipObject.pML.buffMgr;
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
+    let buffMgr = equipObject.pML.buffMgr;
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action)) {
             if(obj.type===MAP_DEF.TYPE_UNIT){
-                var buffs = buffMgr.buffList[obj.objID];
+                let buffs = buffMgr.buffList[obj.objID];
                 if(buffs && buffs.length>0){
-                    for(var i=0;i<buffs.length;i++){
-                        var buff = buffs[i];
+                    for(let i=0;i<buffs.length;i++){
+                        let buff = buffs[i];
                         if(buff.mode === BUFF_DEF.MODE_DEBUFF){
                             buff.removeSelf();
                         }
@@ -382,13 +382,13 @@ SkillAction.refresh = function(paras) {
 
 /// 嘲讽周围部队
 SkillAction.taunt = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
-    var targets = [];   //被嘲讽的目标数组
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
+    let targets = [];   //被嘲讽的目标数组
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action)) {
             if(obj.type===MAP_DEF.TYPE_UNIT){
@@ -410,17 +410,17 @@ SkillAction.taunt = function(paras) {
 /// 范围伤害
 SkillAction.adviserAoe = function(paras){
     _.log('adviserAoe')
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (obj.force !== equiper.shiLi && SkillAction.checkTargetBeDebuff(obj)) {
-            var realTarget = SkillAction.getActionTarget(obj, action);
+            let realTarget = SkillAction.getActionTarget(obj, action);
             if(realTarget){
-                var damage = SkillAction.calAdviserDamage(equiper, equipObject, obj, skill, addParas);
+                let damage = SkillAction.calAdviserDamage(equiper, equipObject, obj, skill, addParas);
                 _.log('adviserAoe', damage, obj.name);
                 //obj.changeTroops(-damage);
                 SkillAction.attackAction(damage, equipObject, obj, ARMY_DEF.DAMAGE_TYPE_NORMAL);
@@ -431,15 +431,15 @@ SkillAction.adviserAoe = function(paras){
 
 /// 军师技能范围伤害
 SkillAction.aoe = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action) && SkillAction.checkTargetBeDebuff(obj)) {
-            var damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
+            let damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
             _.log('aoe', damage, obj.name);
             //obj.changeTroops(-damage);
             SkillAction.attackAction(damage, equipObject, obj, ARMY_DEF.DAMAGE_TYPE_NORMAL);
@@ -449,15 +449,15 @@ SkillAction.aoe = function(paras){
 
 /// 齐攻
 SkillAction.linkAtk = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     if(SkillAction.checkTargetBeDebuff(target)) {
         SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
             if (obj.force === equipObject.force && typeof obj.type===MAP_DEF.TYPE_UNIT) {
-                var damage = SkillAction.calDamage(equiper, obj, target, skill, addParas);
+                let damage = SkillAction.calDamage(equiper, obj, target, skill, addParas);
                 _.log('linkAtk', damage, obj.name);
                 //target.changeTroops(-damage);
                 SkillAction.attackAction(damage, obj, target, ARMY_DEF.DAMAGE_TYPE_NORMAL);
@@ -468,23 +468,23 @@ SkillAction.linkAtk = function(paras){
 
 /// 持续性范围伤害技能
 SkillAction.dotaoe = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var interval = addParas['interval'];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let interval = addParas['interval'];
     //cx cy oriForce 需要先缓存下来，因为随着时间的推移可能会变化
-    var cx = target.cx;
-    var cy = target.cy;
-    var oriForce = equipObject.force;
-    var cells = SkillAction.wLayer.map.scopeCellsByTileXY(cx, cy, skill.scope, true);
-    var tileNode = SkillAction.initTileNodes(cx, cy, skill.scope);
+    let cx = target.cx;
+    let cy = target.cy;
+    let oriForce = equipObject.force;
+    let cells = SkillAction.wLayer.map.scopeCellsByTileXY(cx, cy, skill.scope, true);
+    let tileNode = SkillAction.initTileNodes(cx, cy, skill.scope);
     SkillAction.wLayer.setTimeMechine(null, skill.duration* _.TIME.SEC, interval* _.TIME.SEC, function(){
         SkillAction.scopeLoop(cx, cy, skill.scope, function(obj){
             if (obj.force !== oriForce && typeof obj.changeTroops==='function') {
                 if(SkillAction.checkTargetBeDebuff(obj)) {
-                    var damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
+                    let damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
                     _.log('dotaoe', damage, obj.name);
                     SkillAction.attackAction(damage, equipObject, obj, ARMY_DEF.DAMAGE_TYPE_NORMAL);
                     //obj.changeTroops(-damage);
@@ -499,17 +499,17 @@ SkillAction.dotaoe = function(paras){
 
 /// 持续性影响的action
 SkillAction.dot = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var interval = addParas['interval'];
-    var funcName = addParas['function'];
-    var paras = addParas['args'];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let interval = addParas['interval'];
+    let funcName = addParas['function'];
+    let paras = addParas['args'];
     SkillAction.wLayer.setTimeMechine(null, skill.duration* _.TIME.SEC, interval* _.TIME.SEC, function(){
         if(SkillAction.checkTargetBeDebuff(target)) {
-            var damage = target[funcName](paras);
+            let damage = target[funcName](paras);
             SkillAction.attackAction(damage, equipObject, target, ARMY_DEF.DAMAGE_TYPE_NORMAL);
         }
     }, function(){
@@ -519,16 +519,16 @@ SkillAction.dot = function(paras){
 
 /// 使已经陷入混乱的军队延长混乱时间
 SkillAction.continueHunluan = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (obj.force !== equipObject.force && obj.buffStatus===ARMY_DEF.BUFF_STATUS_HUNLUAN) { //对已经混乱的目标继续释放混乱
             //_.log('continueHunluan',obj.name);
             if(SkillAction.checkTargetBeDebuff(obj)) {
-                var p = [obj, equiper, equipObject, skill.name, addParas['buffID'], addParas['fomulaID'], addParas['durationID']];
+                let p = [obj, equiper, equipObject, skill.name, addParas['buffID'], addParas['fomulaID'], addParas['durationID']];
                 Action.addHunLuan(p);
             }
         }
@@ -537,23 +537,23 @@ SkillAction.continueHunluan = function(paras){
 
 /// 使火焰中的军队变为混乱
 //SkillAction.fireHunluan = function(paras){
-//    var target = paras[0];  //技能目标
-//    var equiper = paras[1]; //技能装备的武将
-//    var equipObject = paras[2]; //使用技能的军队或建筑
-//    var skill = paras[3];   //技能名称
-//    var addParas = paras[4];    //技能附加参数对象
-//    var visitedObjs = [];
-//    var cells = SkillAction.wLayer.map.scopeCellsByTileXY(target.cx, target.cy, skill.scope, true);
-//    for(var i=0;i<cells.length;i++){
+//    let target = paras[0];  //技能目标
+//    let equiper = paras[1]; //技能装备的武将
+//    let equipObject = paras[2]; //使用技能的军队或建筑
+//    let skill = paras[3];   //技能名称
+//    let addParas = paras[4];    //技能附加参数对象
+//    let visitedObjs = [];
+//    let cells = SkillAction.wLayer.map.scopeCellsByTileXY(target.cx, target.cy, skill.scope, true);
+//    for(let i=0;i<cells.length;i++){
 //        //_.log(i, cells[i].cx, cells[i].cy);
-//        var objs = cells[i].objects;
+//        let objs = cells[i].objects;
 //        if(objs){
-//            for (var j = 0; j < objs.length; j++) {
-//                var obj = objs[j];
+//            for (let j = 0; j < objs.length; j++) {
+//                let obj = objs[j];
 //                //_.log(obj.name);
 //                if(visitedObjs.indexOf(obj)===-1){
 //                    visitedObjs.push(obj);
-//                    var breakFlag = cb(obj);
+//                    let breakFlag = cb(obj);
 //                    if(breakFlag){
 //                        break;
 //                    }
@@ -565,31 +565,31 @@ SkillAction.continueHunluan = function(paras){
 
 /// 士气变化
 SkillAction.changeShiQi = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能
-    var addParas = paras[4];    //技能附加参数对象
-    var action = paras[5];
-    var fomulaID = addParas['fomulaID'];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能
+    let addParas = paras[4];    //技能附加参数对象
+    let action = paras[5];
+    let fomulaID = addParas['fomulaID'];
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (SkillAction.checkAffectType(obj, equipObject, action) && !isNaN(obj.shiQi)) {
-            var p = [equipObject, obj, skill, equiper,addParas['isBeishui']];
-            var shiqi = FOMULA.run(fomulaID, p);
+            let p = [equipObject, obj, skill, equiper,addParas['isBeishui']];
+            let shiqi = FOMULA.run(fomulaID, p);
             if(isNaN(shiqi)){
                 return ;
             }
             if (shiqi > 0) {				
-            	var frames = cc.getAnimFrames('skill/shiqi/up/%d.png');
-            	var upEffect = cc.createAni({anchor : [0.5, 0.5]}, 3, cc.director.getAnimationInterval()*frames.length, frames);
+            	let frames = cc.getAnimFrames('skill/shiqi/up/%d.png');
+            	let upEffect = cc.createAni({anchor : [0.5, 0.5]}, 3, cc.director.getAnimationInterval()*frames.length, frames);
             	upEffect.setPosition(cc.p(0.0, 0.0));
             	upEffect.then(function() {
             		upEffect.removeFromParent(true);
             	}).act();
             	obj.addEffectChildUp(upEffect);
             } else {
-            	var frames = cc.getAnimFrames('skill/shiqi/down/%d.png');
-            	var downEffect = cc.createAni({anchor : [0.5, 0.5]}, 3, cc.director.getAnimationInterval()*frames.length, frames);
+            	let frames = cc.getAnimFrames('skill/shiqi/down/%d.png');
+            	let downEffect = cc.createAni({anchor : [0.5, 0.5]}, 3, cc.director.getAnimationInterval()*frames.length, frames);
             	downEffect.setPosition(cc.p(0.0, 0.0));
             	downEffect.then(function() {
             		downEffect.removeFromParent(true);
@@ -603,23 +603,23 @@ SkillAction.changeShiQi = function(paras){
 
 ///吸血 将敌方损失部队加到我军上
 SkillAction.suckBlood = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     if(!CONFLICT.checkByTask(target, 'beDebuff')){
         return ;
     }
 
-    var damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
+    let damage = SkillAction.calDamage(equiper, equipObject, target, skill, addParas);
     _.log('suckBlood '+damage);
     if(damage>0){
         SkillAction.attackAction(damage, equipObject, target, ARMY_DEF.DAMAGE_TYPE_NORMAL);
         //target.changeTroops(-damage);
         if(equipObject.wuJiang){   //如果是部队则进行限制，如果是城池则不做限制
-            var jwID = equipObject.wuJiang.daJiang.jueWei;
-            var troopsLimit = JueWei.getTroopsLimit(jwID, equipObject.force);
+            let jwID = equipObject.wuJiang.daJiang.jueWei;
+            let troopsLimit = JueWei.getTroopsLimit(jwID, equipObject.force);
             if(troopsLimit - equipObject.troops < damage){ //如果超出主将带兵上限，则修改为达到带兵上限
                 damage = Math.max(troopsLimit - equipObject.troops, 0);
             }
@@ -631,21 +631,21 @@ SkillAction.suckBlood = function(paras){
 
 ///治疗 恢复伤兵
 SkillAction.cure = function(paras) {
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var fomulaID = addParas['fomulaID'];
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let fomulaID = addParas['fomulaID'];
 
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (obj.force === equipObject.force && !isNaN(obj.wounded) && !isNaN(obj.troops)) {
-            var fomulaP = [];
+            let fomulaP = [];
             fomulaP[0] = equipObject;
             fomulaP[1] = obj;
             fomulaP[2] = skill;
             fomulaP[3] = equiper;
-            var cureTroops = Math.round(FOMULA.run(fomulaID, fomulaP));
+            let cureTroops = Math.round(FOMULA.run(fomulaID, fomulaP));
             //_.log('治疗：'+cureTroops+' '+selfArmy.name+' 对 '+target.name);
 //            obj.changeTroops(cureTroops);
 //            obj.changeWounded(-cureTroops);
@@ -656,14 +656,14 @@ SkillAction.cure = function(paras) {
 
 /// 内讧，让范围内的敌人互相攻击
 SkillAction.convert = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var oriForceMap = {};   //存储被改变force军队的原始force
-    var oriObjArr = [];   //存储被改变force军队的obj
-    var startIdx = 1;
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let oriForceMap = {};   //存储被改变force军队的原始force
+    let oriObjArr = [];   //存储被改变force军队的obj
+    let startIdx = 1;
     //先搜索附近是否有能够转移目标的军队
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if (obj.force !== equipObject.force && obj.type===MAP_DEF.TYPE_UNIT) {
@@ -673,11 +673,11 @@ SkillAction.convert = function(paras){
             startIdx++;
         }
     });
-    for(var i=0;i<oriObjArr.length;i++){
-        var obj = oriObjArr[i];
-        var others = _(oriObjArr).without(obj);
+    for(let i=0;i<oriObjArr.length;i++){
+        let obj = oriObjArr[i];
+        let others = _(oriObjArr).without(obj);
         if(others.length>0){
-            var idx = _.rand(others.length);    //随机选一个目标
+            let idx = _.rand(others.length);    //随机选一个目标
             obj.setTarget(others[idx]);
         }
     }
@@ -691,12 +691,12 @@ SkillAction.convert = function(paras){
 
 /// 骄兵，让敌人出兵来攻打
 SkillAction.jiaobing = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var newTarget;
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let newTarget;
     //先搜索附近是否有能够转移目标的军队
     SkillAction.scopeLoop(target.cx, target.cy, addParas['findEnemyScope'], function(obj){
         if (obj.force === equipObject.force) {
@@ -725,15 +725,15 @@ SkillAction.jiaobing = function(paras){
 
 /// 点火
 SkillAction.addFire = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if(obj.type===MAP_DEF.TYPE_BUILDING_TINDER){
-            //var origin = role.origin || role;
-            var info = {
+            //let origin = role.origin || role;
+            let info = {
                 name: "火苗",
                 type: MAP_DEF.TYPE_FIRE_FRAME,
                 level: 1,
@@ -755,11 +755,11 @@ SkillAction.addFire = function(paras){
 
 /// 灭火
 SkillAction.clearFire = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     //_.log('clearFire',skill.scope, target.name);
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         //_.log(obj.type);
@@ -771,14 +771,14 @@ SkillAction.clearFire = function(paras){
 
 /// 合兵
 SkillAction.fuse = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
     //_.log('clearFire',skill.scope, target.name);
-    var smallestArmy;
-    var smallestTroops = 99999999;
+    let smallestArmy;
+    let smallestTroops = 99999999;
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         _.log(obj.name);
         if(obj.type===MAP_DEF.TYPE_UNIT && obj!==equipObject && obj.force===equipObject.force && obj.troops>0 && obj.troops<smallestTroops){
@@ -798,7 +798,7 @@ SkillAction.fuse = function(paras){
 
 /// 攻击action 用于发射消息和改变兵力
 SkillAction.attackAction = function(damage, attacker, target, damageType){
-    var info = {
+    let info = {
         damage: damage,    //伤害
         attacker: attacker,    //伤害来源
         target: target,    //受到伤害的目标
@@ -822,23 +822,23 @@ SkillAction.doDamage = function(target, damage, wounded) {
 		target.changeTroops(damage);
 		ccs.armatureDataManager.addArmatureFileInfo("res/animation/jineng_shanghai/jineng_shanghai.ExportJson");
 
-		var armature = new ccs.Armature("jineng_shanghai");
+		let armature = new ccs.Armature("jineng_shanghai");
 
 		//damage label
 		armature.getBone("Layer3").removeDisplay(0);
-		var damageNode = new cc.Node();
-		var originX = 37;
-		var numX = originX;
-		var damageCount = Math.abs(damage);
+		let damageNode = new cc.Node();
+		let originX = 37;
+		let numX = originX;
+		let damageCount = Math.abs(damage);
 		while (damageCount !== 0) {
-			var num = damageCount%10;
-			var numSpr = cc.createSprite("yellow_" + num + ".png", {anchor:[0.5, 0.5]});
+			let num = damageCount%10;
+			let numSpr = cc.createSprite("yellow_" + num + ".png", {anchor:[0.5, 0.5]});
 			numSpr.x = numX;
 			damageNode.addChild(numSpr);
 			numX -= 25;
 			damageCount = (damageCount - num)/10;
 		}
-		var minusSpr = cc.createSprite("yellow_-.png", {anchor:[0.5, 0.5]});
+		let minusSpr = cc.createSprite("yellow_-.png", {anchor:[0.5, 0.5]});
 		minusSpr.x = numX;
 		damageNode.addChild(minusSpr);
 		armature.getBone("Layer3").addDisplay(damageNode, 0);
@@ -858,28 +858,28 @@ SkillAction.doDamage = function(target, damage, wounded) {
 	}
 	else {
 		//加血
-        var woundedCount = wounded || -damage;
+        let woundedCount = wounded || -damage;
 		target.changeTroops(damage);
 		target.changeWounded(woundedCount);
 		ccs.armatureDataManager.addArmatureFileInfo("res/animation/jineng_shanghai/jineng_shanghai.ExportJson");
 
-		var armature = new ccs.Armature("jineng_shanghai");
+		let armature = new ccs.Armature("jineng_shanghai");
 
 		//damage label
 		armature.getBone("Layer3").removeDisplay(0);
-		var damageNode = new cc.Node();
-		var originX = 37;
-		var numX = originX;
-		var damageCount = Math.abs(damage);
+		let damageNode = new cc.Node();
+		let originX = 37;
+		let numX = originX;
+		let damageCount = Math.abs(damage);
 		while (damageCount !== 0) {
-			var num = damageCount%10;
-			var numSpr = cc.createSprite("green_" + num + ".png", {anchor:[0.5, 0.5]});
+			let num = damageCount%10;
+			let numSpr = cc.createSprite("green_" + num + ".png", {anchor:[0.5, 0.5]});
 			numSpr.x = numX;
 			damageNode.addChild(numSpr);
 			numX -= 25;
 			damageCount = (damageCount - num)/10;
 		}
-		var minusSpr = cc.createSprite("green_+.png", {anchor:[0.5, 0.5]});
+		let minusSpr = cc.createSprite("green_+.png", {anchor:[0.5, 0.5]});
 		minusSpr.x = numX;
 		damageNode.addChild(minusSpr);
 		armature.getBone("Layer3").addDisplay(damageNode, 0);
@@ -901,15 +901,15 @@ SkillAction.doDamage = function(target, damage, wounded) {
 
 /// 冲锋
 SkillAction.charge = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
-    var path = SkillAction.wLayer.map.tilePath(equipObject.cx, equipObject.cy, target.cx, target.cy);
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
+    let path = SkillAction.wLayer.map.tilePath(equipObject.cx, equipObject.cy, target.cx, target.cy);
 
     equipObject.setTarget(target, path);
-    var oriRate = equipObject._speedRate;
+    let oriRate = equipObject._speedRate;
     equipObject.setSpeedRate(999, true);
     equipObject.moveFinishCB = function(){
         //_.log('moveFinishCB');
@@ -917,32 +917,32 @@ SkillAction.charge = function(paras){
     };
     equipObject.changeAIState(ArmyStateMovingUnstoppable);
     //chargeEffect
-    var effectNode = new cc.Node();
-    var frames = cc.getAnimFrames('skill/charge/%d.png');
-    var upEffect = cc.createAni({anchor : [0.5, 0.5]}, 0, 3*cc.director.getAnimationInterval()*frames.length, frames);
+    let effectNode = new cc.Node();
+    let frames = cc.getAnimFrames('skill/charge/%d.png');
+    let upEffect = cc.createAni({anchor : [0.5, 0.5]}, 0, 3*cc.director.getAnimationInterval()*frames.length, frames);
     upEffect.then(function() {
     	upEffect.removeFromParent(true);
     }).act();
     upEffect.y = 15;
     //streak
-    var streak = cc.ParticleSystem.create("res/images/charge.plist");
+    let streak = cc.ParticleSystem.create("res/images/charge.plist");
     effectNode.addChild(streak);
     effectNode.setPosition(cc.p(10.0, 35.0));
     effectNode.addChild(upEffect);
     effectNode.setTag(SYS.ChargeEffectTag*10);
     equipObject.addEffectChildUp(effectNode);
     
-    var cells = SkillAction.findCellsAroundPath(path);
+    let cells = SkillAction.findCellsAroundPath(path);
     SkillAction.scopeLoop(target.cx, target.cy, skill.scope, function(obj){
         if(obj.force!==equipObject.force && typeof obj.changeTroops==='function'){
             if(SkillAction.checkTargetBeDebuff(obj)) {
-                var damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
+                let damage = SkillAction.calDamage(equiper, equipObject, obj, skill, addParas);
                 //_.log('charge', damage, obj.name);
                 SkillAction.attackAction(damage, equipObject, obj, ARMY_DEF.DAMAGE_TYPE_NORMAL);
 
                 //有几率无阵
-                var prob = FOMULA.wuzhen();
-                var ac = _.rand(100)/100;
+                let prob = FOMULA.wuzhen();
+                let ac = _.rand(100)/100;
                 if(ac<=prob){
                     SkillAction.wLayer.buffMgr.addBuff(2300401, obj);
                 }
@@ -953,19 +953,19 @@ SkillAction.charge = function(paras){
 
 /// 入梦 by 孙梦超
 SkillAction.rumeng = function(paras){
-    var target = paras[0];  //技能目标
-    var equiper = paras[1]; //技能装备的武将
-    var equipObject = paras[2]; //使用技能的军队或建筑
-    var skill = paras[3];   //技能名称
-    var addParas = paras[4];    //技能附加参数对象
+    let target = paras[0];  //技能目标
+    let equiper = paras[1]; //技能装备的武将
+    let equipObject = paras[2]; //使用技能的军队或建筑
+    let skill = paras[3];   //技能名称
+    let addParas = paras[4];    //技能附加参数对象
 
     //_.log('兵法强度1', target.bfPower);
     SkillAction.wLayer.buffMgr.addBuff(2301510, target, skill.duration*_.TIME.SEC);
     //_.log('兵法强度2', target.bfPower);
     SkillAction.wLayer.setTimeMechine(null, skill.duration* _.TIME.SEC, 10* _.TIME.SEC, null, function(){
-        var cureNum = Math.min(target.oriTroops*(0.11+skill.power*0.03), target.wounded); //使用回复参数和技能强度计算回复量, 并取该值与受伤人数中较大的一个
-        var jwID = target.wuJiang.daJiang.jueWei;
-        var troopsLimit = JueWei.getTroopsLimit(jwID, equipObject.force);
+        let cureNum = Math.min(target.oriTroops*(0.11+skill.power*0.03), target.wounded); //使用回复参数和技能强度计算回复量, 并取该值与受伤人数中较大的一个
+        let jwID = target.wuJiang.daJiang.jueWei;
+        let troopsLimit = JueWei.getTroopsLimit(jwID, equipObject.force);
         if(troopsLimit - target.troops < cureNum){ //如果超出主将带兵上限，则修改为达到带兵上限
             cureNum = Math.max(troopsLimit - target.troops, 0);
         }

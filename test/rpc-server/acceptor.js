@@ -1,19 +1,19 @@
-var lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
-var Acceptor = require('../../' + lib + '/rpc-server/acceptor');
-var should = require('should');
-var Client = require('./client/mock-client');
+let lib = process.env.POMELO_RPC_COV ? 'lib-cov' : 'lib';
+let Acceptor = require('../../' + lib + '/rpc-server/acceptor');
+let should = require('should');
+let Client = require('./client/mock-client');
 
-var WAIT_TIME = 100;
+let WAIT_TIME = 100;
 
-var port = 3333;
+let port = 3333;
 
 describe('acceptor', function() {
 
   describe('#listen', function() {
     it('should be ok when listen a valid port and emit a closed event when it closed', function(done) {
-      var errorCount = 0;
-      var closeCount = 0;
-      var acceptor = Acceptor.create(null, function(tracer, msg, cb) {});
+      let errorCount = 0;
+      let closeCount = 0;
+      let acceptor = Acceptor.create(null, function(tracer, msg, cb) {});
 
       should.exist(acceptor);
       acceptor.on('error', function(err) {
@@ -34,8 +34,8 @@ describe('acceptor', function() {
     });
 
     it('should emit an error when listen a port in use', function(done) {
-      var errorCount = 0;
-      var acceptor = Acceptor.create(null, function(tracer, msg, cb) {});
+      let errorCount = 0;
+      let acceptor = Acceptor.create(null, function(tracer, msg, cb) {});
 
       should.exist(acceptor);
       acceptor.on('error', function(err) {
@@ -55,15 +55,15 @@ describe('acceptor', function() {
 
   describe('#new message callback', function() {
     it('should invoke the callback function with the same msg and return response to remote client by cb', function(done) {
-      var callbackCount = 0;
-      var clientCallbackCount = 0;
-      var orgMsg = {
+      let callbackCount = 0;
+      let clientCallbackCount = 0;
+      let orgMsg = {
         service: 'xxx.yyy.zzz',
         method: 'someMethod',
         args: [1, 'a', {param: 100}]
       };
 
-      var acceptor = Acceptor.create(null, function(tracer, msg, cb) {
+      let acceptor = Acceptor.create(null, function(tracer, msg, cb) {
         msg.should.eql(orgMsg);
         callbackCount++;
         cb(msg);
@@ -72,7 +72,7 @@ describe('acceptor', function() {
       should.exist(acceptor);
       acceptor.listen(port);
 
-      var client = Client.create();
+      let client = Client.create();
       client.connect('127.0.0.1', port, function() {
         client.send(orgMsg, function(backMsg) {
           backMsg.should.eql(orgMsg);
@@ -90,27 +90,27 @@ describe('acceptor', function() {
     });
 
     it('should keep the relationship with request and response in batch rpc calls', function(done) {
-      var callbackCount = 0;
-      var clientCallbackCount = 0;
-      var orgMsg1 = {
+      let callbackCount = 0;
+      let clientCallbackCount = 0;
+      let orgMsg1 = {
         service: 'xxx.yyy.zzz1',
         method: 'someMethod1',
         args: [1, 'a', {param: 100}]
       };
-      var orgMsg2 = {
+      let orgMsg2 = {
         service: 'xxx.yyy.zzz2',
         method: 'someMethod2',
         args: [2, 'a', {param: 100}]
       };
 
-      var acceptor = Acceptor.create(null, function(tracer, msg, cb) {
+      let acceptor = Acceptor.create(null, function(tracer, msg, cb) {
         callbackCount++;
         cb(msg);
       });
       should.exist(acceptor);
       acceptor.listen(port);
 
-      var client = Client.create();
+      let client = Client.create();
       client.connect('127.0.0.1', port, function() {
         client.send(orgMsg1, function(backMsg) {
           backMsg.should.eql(orgMsg1);

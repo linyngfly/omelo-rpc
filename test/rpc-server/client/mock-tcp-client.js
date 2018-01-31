@@ -1,10 +1,10 @@
-var net = require('net');
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
-var utils = require('../../../lib/util/utils');
-var Composer = require('stream-pkg');
+let net = require('net');
+let EventEmitter = require('events').EventEmitter;
+let util = require('util');
+let utils = require('../../../lib/util/utils');
+let Composer = require('stream-pkg');
 
-var Client = function() {
+let Client = function() {
   EventEmitter.call(this);
   this.requests = {};
   this.curId = 0;
@@ -13,21 +13,21 @@ var Client = function() {
 };
 util.inherits(Client, EventEmitter);
 
-var pro = Client.prototype;
+let pro = Client.prototype;
 
 pro.connect = function(host, port, cb) {
   this.socket = net.connect({port: port, host: host}, function() {
     utils.invokeCallback(cb);
   });
   console.log('socket: %j', !!this.socket);
-  var self = this;
+  let self = this;
   this.socket.on('data', function(data) {
     self.composer.feed(data);
   });
 
   this.composer.on('data', function(data) {
-    var pkg = JSON.parse(data.toString());
-    var cb = self.requests[pkg.id];
+    let pkg = JSON.parse(data.toString());
+    let cb = self.requests[pkg.id];
     delete self.requests[pkg.id];
 
     if(!cb) {
@@ -39,7 +39,7 @@ pro.connect = function(host, port, cb) {
 };
 
 pro.send = function(msg, cb) {
-  var id = this.curId++;
+  let id = this.curId++;
   this.requests[id] = cb;
   this.socket.write(this.composer.compose(JSON.stringify({id: id, msg: msg})));
 };

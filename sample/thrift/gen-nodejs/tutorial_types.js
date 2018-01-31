@@ -3,14 +3,14 @@
 //
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 //
-var thrift = require('thrift');
-var Thrift = thrift.Thrift;
-var Q = thrift.Q;
+let thrift = require('thrift');
+let Thrift = thrift.Thrift;
+let Q = thrift.Q;
 
-var shared_ttypes = require('./shared_types')
+let shared_ttypes = require('./shared_types')
 
 
-var ttypes = module.exports = {};
+let ttypes = module.exports = {};
 ttypes.Operation = {
   'ADD' : 1,
   'SUBTRACT' : 2,
@@ -42,10 +42,10 @@ Work.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -135,10 +135,10 @@ InvalidOperation.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }

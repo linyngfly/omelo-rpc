@@ -1,23 +1,23 @@
-var sioClient = require('socket.io-client');
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
-var utils = require('../../../lib/util/utils');
+let sioClient = require('socket.io-client');
+let EventEmitter = require('events').EventEmitter;
+let util = require('util');
+let utils = require('../../../lib/util/utils');
 
-var Client = function() {
+let Client = function() {
   EventEmitter.call(this);
   this.requests = {};
   this.curId = 0;
 };
 util.inherits(Client, EventEmitter);
 
-var pro = Client.prototype;
+let pro = Client.prototype;
 
 pro.connect = function(host, port, cb) {
   this.socket = sioClient.connect(host + ':' + port, {'force new connection': true});
 
-  var self = this;
+  let self = this;
   this.socket.on('message', function(pkg) {
-    var cb = self.requests[pkg.id];
+    let cb = self.requests[pkg.id];
     delete self.requests[pkg.id];
 
     if(!cb) {
@@ -33,7 +33,7 @@ pro.connect = function(host, port, cb) {
 };
 
 pro.send = function(msg, cb) {
-  var id = this.curId++;
+  let id = this.curId++;
   this.requests[id] = cb;
   this.socket.emit('message', {id: id, msg: msg});
 };

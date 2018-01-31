@@ -17,17 +17,17 @@
  * under the License.
  */
 
-var thrift = require('thrift');
-// var ThriftTransports = require('thrift/transport');
-// var ThriftProtocols = require('thrift/protocol');
-var Calculator = require('./gen-nodejs/Calculator');
-var ttypes = require('./gen-nodejs/tutorial_types');
+let thrift = require('thrift');
+// let ThriftTransports = require('thrift/transport');
+// let ThriftProtocols = require('thrift/protocol');
+let Calculator = require('./gen-nodejs/Calculator');
+let ttypes = require('./gen-nodejs/tutorial_types');
 
 
 transport = thrift.TBufferedTransport()
 protocol = thrift.TBinaryProtocol()
 
-var connection = thrift.createConnection("localhost", 9090, {
+let connection = thrift.createConnection("localhost", 9090, {
   transport : transport,
   protocol : protocol
 });
@@ -37,13 +37,13 @@ connection.on('error', function(err) {
 });
 
 // Create a Calculator client with the connection
-var client = thrift.createClient(Calculator, connection);
+let client = thrift.createClient(Calculator, connection);
 
-var num_requests = 20000;
-var times = 0;
-var start = Date.now();
+let num_requests = 20000;
+let times = 0;
+let start = Date.now();
 
-var rpcRequest = function(msg, cb) {
+let rpcRequest = function(msg, cb) {
   client.ping(function(err, response) {
     cb()
   });
@@ -55,8 +55,8 @@ function run() {
   }
 
   if (times == num_requests) {
-    var now = Date.now();
-    var cost = now - start;
+    let now = Date.now();
+    let cost = now - start;
     console.log('run %d num requests cost: %d ops/sec', num_requests, cost, (num_requests / (cost / 1000)).toFixed(2));
     times = 0;
     start = now;

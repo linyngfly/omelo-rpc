@@ -3,17 +3,17 @@
 //
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 //
-var thrift = require('thrift');
-var Thrift = thrift.Thrift;
-var Q = thrift.Q;
+let thrift = require('thrift');
+let Thrift = thrift.Thrift;
+let Q = thrift.Q;
 
-var shared_ttypes = require('./shared_types')
+let shared_ttypes = require('./shared_types')
 
 
-var SharedService = require('./SharedService')
-var SharedServiceClient = SharedService.Client
-var SharedServiceProcessor = SharedService.Processor
-var ttypes = require('./tutorial_types');
+let SharedService = require('./SharedService')
+let SharedServiceClient = SharedService.Client
+let SharedServiceProcessor = SharedService.Processor
+let ttypes = require('./tutorial_types');
 //HELPER FUNCTIONS AND STRUCTURES
 
 Calculator_ping_args = function(args) {
@@ -23,10 +23,10 @@ Calculator_ping_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -51,10 +51,10 @@ Calculator_ping_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -89,10 +89,10 @@ Calculator_add_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -151,10 +151,10 @@ Calculator_add_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -208,10 +208,10 @@ Calculator_calculate_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -279,10 +279,10 @@ Calculator_calculate_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -336,10 +336,10 @@ Calculator_zip_args.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -364,10 +364,10 @@ Calculator_zip_result.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
-    var ret = input.readFieldBegin();
-    var fname = ret.fname;
-    var ftype = ret.ftype;
-    var fid = ret.fid;
+    let ret = input.readFieldBegin();
+    let fname = ret.fname;
+    let ftype = ret.ftype;
+    let fid = ret.fid;
     if (ftype == Thrift.Type.STOP) {
       break;
     }
@@ -397,7 +397,7 @@ CalculatorClient.prototype.new_seqid = function() { return this._seqid += 1; }
 CalculatorClient.prototype.ping = function(callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
-    var _defer = Q.defer();
+    let _defer = Q.defer();
     this._reqs[this.seqid()] = function(error, result) {
       if (error) {
         _defer.reject(error);
@@ -414,24 +414,24 @@ CalculatorClient.prototype.ping = function(callback) {
 };
 
 CalculatorClient.prototype.send_ping = function() {
-  var output = new this.pClass(this.output);
+  let output = new this.pClass(this.output);
   output.writeMessageBegin('ping', Thrift.MessageType.CALL, this.seqid());
-  var args = new Calculator_ping_args();
+  let args = new Calculator_ping_args();
   args.write(output);
   output.writeMessageEnd();
   return this.output.flush();
 };
 
 CalculatorClient.prototype.recv_ping = function(input,mtype,rseqid) {
-  var callback = this._reqs[rseqid] || function() {};
+  let callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
-    var x = new Thrift.TApplicationException();
+    let x = new Thrift.TApplicationException();
     x.read(input);
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new Calculator_ping_result();
+  let result = new Calculator_ping_result();
   result.read(input);
   input.readMessageEnd();
 
@@ -440,7 +440,7 @@ CalculatorClient.prototype.recv_ping = function(input,mtype,rseqid) {
 CalculatorClient.prototype.add = function(num1, num2, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
-    var _defer = Q.defer();
+    let _defer = Q.defer();
     this._reqs[this.seqid()] = function(error, result) {
       if (error) {
         _defer.reject(error);
@@ -457,9 +457,9 @@ CalculatorClient.prototype.add = function(num1, num2, callback) {
 };
 
 CalculatorClient.prototype.send_add = function(num1, num2) {
-  var output = new this.pClass(this.output);
+  let output = new this.pClass(this.output);
   output.writeMessageBegin('add', Thrift.MessageType.CALL, this.seqid());
-  var args = new Calculator_add_args();
+  let args = new Calculator_add_args();
   args.num1 = num1;
   args.num2 = num2;
   args.write(output);
@@ -468,15 +468,15 @@ CalculatorClient.prototype.send_add = function(num1, num2) {
 };
 
 CalculatorClient.prototype.recv_add = function(input,mtype,rseqid) {
-  var callback = this._reqs[rseqid] || function() {};
+  let callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
-    var x = new Thrift.TApplicationException();
+    let x = new Thrift.TApplicationException();
     x.read(input);
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new Calculator_add_result();
+  let result = new Calculator_add_result();
   result.read(input);
   input.readMessageEnd();
 
@@ -488,7 +488,7 @@ CalculatorClient.prototype.recv_add = function(input,mtype,rseqid) {
 CalculatorClient.prototype.calculate = function(logid, w, callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
-    var _defer = Q.defer();
+    let _defer = Q.defer();
     this._reqs[this.seqid()] = function(error, result) {
       if (error) {
         _defer.reject(error);
@@ -505,9 +505,9 @@ CalculatorClient.prototype.calculate = function(logid, w, callback) {
 };
 
 CalculatorClient.prototype.send_calculate = function(logid, w) {
-  var output = new this.pClass(this.output);
+  let output = new this.pClass(this.output);
   output.writeMessageBegin('calculate', Thrift.MessageType.CALL, this.seqid());
-  var args = new Calculator_calculate_args();
+  let args = new Calculator_calculate_args();
   args.logid = logid;
   args.w = w;
   args.write(output);
@@ -516,15 +516,15 @@ CalculatorClient.prototype.send_calculate = function(logid, w) {
 };
 
 CalculatorClient.prototype.recv_calculate = function(input,mtype,rseqid) {
-  var callback = this._reqs[rseqid] || function() {};
+  let callback = this._reqs[rseqid] || function() {};
   delete this._reqs[rseqid];
   if (mtype == Thrift.MessageType.EXCEPTION) {
-    var x = new Thrift.TApplicationException();
+    let x = new Thrift.TApplicationException();
     x.read(input);
     input.readMessageEnd();
     return callback(x);
   }
-  var result = new Calculator_calculate_result();
+  let result = new Calculator_calculate_result();
   result.read(input);
   input.readMessageEnd();
 
@@ -539,7 +539,7 @@ CalculatorClient.prototype.recv_calculate = function(input,mtype,rseqid) {
 CalculatorClient.prototype.zip = function(callback) {
   this._seqid = this.new_seqid();
   if (callback === undefined) {
-    var _defer = Q.defer();
+    let _defer = Q.defer();
     this._reqs[this.seqid()] = function(error, result) {
       if (error) {
         _defer.reject(error);
@@ -556,9 +556,9 @@ CalculatorClient.prototype.zip = function(callback) {
 };
 
 CalculatorClient.prototype.send_zip = function() {
-  var output = new this.pClass(this.output);
+  let output = new this.pClass(this.output);
   output.writeMessageBegin('zip', Thrift.MessageType.ONEWAY, this.seqid());
-  var args = new Calculator_zip_args();
+  let args = new Calculator_zip_args();
   args.write(output);
   output.writeMessageEnd();
   return this.output.flush();
@@ -568,13 +568,13 @@ CalculatorProcessor = exports.Processor = function(handler) {
 }
 Thrift.inherits(CalculatorProcessor, SharedServiceProcessor)
 CalculatorProcessor.prototype.process = function(input, output) {
-  var r = input.readMessageBegin();
+  let r = input.readMessageBegin();
   if (this['process_' + r.fname]) {
     return this['process_' + r.fname].call(this, r.rseqid, input, output);
   } else {
     input.skip(Thrift.Type.STRUCT);
     input.readMessageEnd();
-    var x = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN_METHOD, 'Unknown function ' + r.fname);
+    let x = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN_METHOD, 'Unknown function ' + r.fname);
     output.writeMessageBegin(r.fname, Thrift.MessageType.EXCEPTION, r.rseqid);
     x.write(output);
     output.writeMessageEnd();
@@ -583,19 +583,19 @@ CalculatorProcessor.prototype.process = function(input, output) {
 }
 
 CalculatorProcessor.prototype.process_ping = function(seqid, input, output) {
-  var args = new Calculator_ping_args();
+  let args = new Calculator_ping_args();
   args.read(input);
   input.readMessageEnd();
   if (this._handler.ping.length === 0) {
     Q.fcall(this._handler.ping)
       .then(function(result) {
-        var result = new Calculator_ping_result({success: result});
+        let result = new Calculator_ping_result({success: result});
         output.writeMessageBegin("ping", Thrift.MessageType.REPLY, seqid);
         result.write(output);
         output.writeMessageEnd();
         output.flush();
       }, function (err) {
-        var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("ping", Thrift.MessageType.EXCEPTION, seqid);
         result.write(output);
         output.writeMessageEnd();
@@ -604,10 +604,10 @@ CalculatorProcessor.prototype.process_ping = function(seqid, input, output) {
   } else {
     this._handler.ping(function (err, result) {
       if (err == null) {
-        var result = new Calculator_ping_result((err != null ? err : {success: result}));
+        let result = new Calculator_ping_result((err != null ? err : {success: result}));
         output.writeMessageBegin("ping", Thrift.MessageType.REPLY, seqid);
       } else {
-        var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("ping", Thrift.MessageType.EXCEPTION, seqid);
       }
       result.write(output);
@@ -618,19 +618,19 @@ CalculatorProcessor.prototype.process_ping = function(seqid, input, output) {
 }
 
 CalculatorProcessor.prototype.process_add = function(seqid, input, output) {
-  var args = new Calculator_add_args();
+  let args = new Calculator_add_args();
   args.read(input);
   input.readMessageEnd();
   if (this._handler.add.length === 2) {
     Q.fcall(this._handler.add, args.num1, args.num2)
       .then(function(result) {
-        var result = new Calculator_add_result({success: result});
+        let result = new Calculator_add_result({success: result});
         output.writeMessageBegin("add", Thrift.MessageType.REPLY, seqid);
         result.write(output);
         output.writeMessageEnd();
         output.flush();
       }, function (err) {
-        var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("add", Thrift.MessageType.EXCEPTION, seqid);
         result.write(output);
         output.writeMessageEnd();
@@ -639,10 +639,10 @@ CalculatorProcessor.prototype.process_add = function(seqid, input, output) {
   } else {
     this._handler.add(args.num1, args.num2, function (err, result) {
       if (err == null) {
-        var result = new Calculator_add_result((err != null ? err : {success: result}));
+        let result = new Calculator_add_result((err != null ? err : {success: result}));
         output.writeMessageBegin("add", Thrift.MessageType.REPLY, seqid);
       } else {
-        var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("add", Thrift.MessageType.EXCEPTION, seqid);
       }
       result.write(output);
@@ -653,23 +653,23 @@ CalculatorProcessor.prototype.process_add = function(seqid, input, output) {
 }
 
 CalculatorProcessor.prototype.process_calculate = function(seqid, input, output) {
-  var args = new Calculator_calculate_args();
+  let args = new Calculator_calculate_args();
   args.read(input);
   input.readMessageEnd();
   if (this._handler.calculate.length === 2) {
     Q.fcall(this._handler.calculate, args.logid, args.w)
       .then(function(result) {
-        var result = new Calculator_calculate_result({success: result});
+        let result = new Calculator_calculate_result({success: result});
         output.writeMessageBegin("calculate", Thrift.MessageType.REPLY, seqid);
         result.write(output);
         output.writeMessageEnd();
         output.flush();
       }, function (err) {
         if (err instanceof ttypes.InvalidOperation) {
-          var result = new Calculator_calculate_result(err);
+          let result = new Calculator_calculate_result(err);
           output.writeMessageBegin("calculate", Thrift.MessageType.REPLY, seqid);
         } else {
-          var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+          let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
           output.writeMessageBegin("calculate", Thrift.MessageType.EXCEPTION, seqid);
         }
         result.write(output);
@@ -679,10 +679,10 @@ CalculatorProcessor.prototype.process_calculate = function(seqid, input, output)
   } else {
     this._handler.calculate(args.logid, args.w, function (err, result) {
       if (err == null || err instanceof ttypes.InvalidOperation) {
-        var result = new Calculator_calculate_result((err != null ? err : {success: result}));
+        let result = new Calculator_calculate_result((err != null ? err : {success: result}));
         output.writeMessageBegin("calculate", Thrift.MessageType.REPLY, seqid);
       } else {
-        var result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
+        let result = new Thrift.TApplicationException(Thrift.TApplicationExceptionType.UNKNOWN, err.message);
         output.writeMessageBegin("calculate", Thrift.MessageType.EXCEPTION, seqid);
       }
       result.write(output);
@@ -693,7 +693,7 @@ CalculatorProcessor.prototype.process_calculate = function(seqid, input, output)
 }
 
 CalculatorProcessor.prototype.process_zip = function(seqid, input, output) {
-  var args = new Calculator_zip_args();
+  let args = new Calculator_zip_args();
   args.read(input);
   input.readMessageEnd();
   this._handler.zip()

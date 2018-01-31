@@ -1,8 +1,8 @@
-var net = require('net'),
+let net = require('net'),
 	mqttCon = require('mqtt-connection'),
 	stream = net.createConnection(1883, 'localhost'),
 	conn = mqttCon(stream);
-var start = null;
+let start = null;
 
 conn.connect({
 	clientId: "test"
@@ -20,8 +20,8 @@ conn.on('pingresp', function() {
 	run();
 })
 
-var num_requests = 20000;
-var times = 0;
+let num_requests = 20000;
+let times = 0;
 
 function run() {
 	if (times > num_requests) {
@@ -29,8 +29,8 @@ function run() {
 	}
 
 	if (times == num_requests) {
-		var now = Date.now();
-		var cost = now - start;
+		let now = Date.now();
+		let cost = now - start;
 		console.log('run %d num requests cost: %d ops/sec', num_requests, cost, (num_requests / (cost / 1000)).toFixed(2));
 		times = 0;
 		start = now;
@@ -39,7 +39,7 @@ function run() {
 
 	times++;
 
-	var payload = "hello";
+	let payload = "hello";
 	// conn.pingreq();
 	conn.publish({
 		topic: "topic",
