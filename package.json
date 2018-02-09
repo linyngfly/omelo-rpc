@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "private": false,
   "deprecated": false,
-  "description": "omelo-rpc is the low level RPC framework for pomelo project. It contains two parts: client and server",
+  "description": "omelo-rpc is the low level RPC framework for omelo project. It contains two parts: client and server",
   "engines": {
     "node": "8.9.0"
   },
@@ -29,7 +29,7 @@
   }],
   "keywords": [
     "omelo-rpc",
-    "pomelo",
+    "omelo",
     "framework",
     "game",
     "web",
@@ -43,8 +43,8 @@
     "crc": "3.5.0",
     "mqtt-connection": "3.2.0",
     "node-uuid": "1.4.8",
-    "pomelo-loader": "0.0.7",
-    "pomelo-logger": "0.1.7",
+    "omelo-loader": "0.0.7",
+    "omelo-logger": "0.1.7",
     "stream-pkg": "0.0.5"
   },
 

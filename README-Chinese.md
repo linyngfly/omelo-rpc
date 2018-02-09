@@ -1,22 +1,22 @@
-#pomelo-rpc - rpc framework for pomelo
-pomelo-rpc是pomelo项目底层的rpc框架，提供了一个多服务器进程间进行rpc调用的基础设施。
-pomelo-rpc分为客户端和服务器端两个部分。
+#omelo-rpc - rpc framework for omelo
+omelo-rpc是pomelo项目底层的rpc框架，提供了一个多服务器进程间进行rpc调用的基础设施。
+omelo-rpc分为客户端和服务器端两个部分。
 客户端部分提供了rpc代理生成，消息路由和网络通讯等功能，并支持动态添加代理和远程服务器配置。
 服务器端提供了远程服务暴露，请求派发，网络通讯等功能。
 
-远程服务代码加载由pomelo-loader模块完成，相关规则可以参考https://github.com/node-pomelo/pomelo-loader
+远程服务代码加载由pomelo-loader模块完成，相关规则可以参考https://github.com/node-omelo/omelo-loader
 
 + Tags: node.js
 
 ##安装
 ```
-npm install pomelo-rpc
+npm install omelo-rpc
 ```
 
 ##用法
 ###Server
 ``` javascript
-let Server = require('pomelo-rpc').server;
+let Server = require('omelo-rpc').server;
 
 // remote service path info list
 let paths = [
@@ -32,7 +32,7 @@ console.log('rpc server started.');
 
 ###Client
 ``` javascript
-let Client = require('pomelo-rpc').client;
+let Client = require('omelo-rpc').client;
 
 // remote service interface path info list
 let records = [

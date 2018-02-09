@@ -1,24 +1,24 @@
-#pomelo-rpc - rpc framework for pomelo
+#omelo-rpc - rpc framework for omelo
 
-pomelo-rpc is the low level RPC framework for pomelo project. It contains two parts: client and server.
+omelo-rpc is the low level RPC framework for omelo project. It contains two parts: client and server.
 
 The client part generates the RPC client proxy, routes the message to the appropriate remote server and manages the network communications. Support add proxies and remote server information dynamically.
 
 The server part exports the remote services, dispatches the remote requests to the services and also manages the network communications.
 
-And the remote service codes would loaded by pomelo-loader module and more details please access this [link](https://github.com/node-pomelo/pomelo-loader).
+And the remote service codes would loaded by omelo-loader module and more details please access this [link](https://github.com/node-omelo/omelo-loader).
 
 + Tags: node.js
 
 ##Installation
 ```
-npm install pomelo-rpc
+npm install omelo-rpc
 ```
 
 ##Usage
 ###Server
 ``` javascript
-let Server = require('pomelo-rpc').server;
+let Server = require('omelo-rpc').server;
 
 // remote service path info list
 let paths = [
@@ -34,7 +34,7 @@ console.log('rpc server started.');
 
 ###Client
 ``` javascript
-let Client = require('pomelo-rpc').client;
+let Client = require('omelo-rpc').client;
 
 // remote service interface path info list
 let records = [
