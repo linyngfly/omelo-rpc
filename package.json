@@ -23,10 +23,12 @@
   "bugs": {
     "url": "https://github.com/linyngfly/omelo-rpc/issues"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/linyngfly/omelo-rpc#license"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/linyngfly/omelo-rpc#license"
+    }
+  ],
   "keywords": [
     "omelo-rpc",
     "omelo",
@@ -36,7 +38,6 @@
     "realtime",
     "server"
   ],
-
   "dependencies": {
     "async": "2.6.0",
     "bearcat-buffer": "0.1.x",
@@ -45,15 +46,17 @@
     "node-uuid": "1.4.8",
     "omelo-loader": "0.0.7",
     "omelo-logger": "0.1.7",
-    "stream-pkg": "0.0.5"
+    "stream-pkg": "0.0.5",
+    "uuid": "^3.2.1"
   },
-
   "devDependencies": {
     "mocha": ">=0.0.1",
     "should": ">=0.0.1"
   },
-  "contributors": [{
-    "name": "linyngfly",
-    "email": "linyngfly@163.com"
-  }]
+  "contributors": [
+    {
+      "name": "linyngfly",
+      "email": "linyngfly@163.com"
+    }
+  ]
 }
