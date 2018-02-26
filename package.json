@@ -1,6 +1,6 @@
 {
   "name": "omelo-rpc",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": false,
   "deprecated": false,
   "description": "omelo-rpc is the low level RPC framework for omelo project. It contains two parts: client and server",
